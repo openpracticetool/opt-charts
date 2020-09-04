@@ -3,13 +3,13 @@ apiVersion: v1
 kind: Service
 metadata:
   annotations:
-    description: The web server's https port.
+    description: The web server's http port.
   labels:
     application: {{ .Values.appName }}
-  name: secure-{{ .Values.appName }}
+  name: {{ .Values.appName }}
 spec:
   ports:
-  - port: {{ .Values.svc.https_port }}
-    targetPort: {{ .Values.svc.https_port }}
+  - port: {{ .Values.svc.http_port }}
+    targetPort: {{ .Values.svc.http_port }}
   selector:
     application: {{ .Values.appName }}

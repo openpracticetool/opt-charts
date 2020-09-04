@@ -9,12 +9,17 @@ deployment:
   replicas: 1
   strategy:
     type: Recreate
-    
+  memory_limit: 1Gi
+
+svc:
+  http_port: 8080
+  https_port: 8443
+  jolokia_port: 8778
+  ping_port: 8888
+  
 route:
   http_host: null
-  http_targetPort: 8080
   https_host: null
-  https_targetPort: 443
   sso_host: null
 
 database:
@@ -26,24 +31,25 @@ database:
   password: [a-zA-Z0-9]{8}
   volume_capacity: 1Gi
   db_tx_isolation: 
-    
-  
+
 keystore:
-  secret_name: sso-app-secret
+  secret: sso-app-secret
   filename: keystore.jks
   type: 
   password:
+  dir: /etc/eap-secret-volume
 
 certificate_server:
   name:
 
 jgroups:
-  JGROUPS_ENCRYPT_SECRET: sso-app-secret
-  JGROUPS_ENCRYPT_KEYSTORE: jgroups.jceks
-  JGROUPS_ENCRYPT_NAME: 
-    JGROUPS_ENCRYPT_PASSWORD: 
-      JGROUPS_CLUSTER_PASSWORD: '[a-zA-Z0-9]{8}'
-
+  encrypt_secret: sso-app-secret
+  encrypt_keystore: jgroups.jcek
+  encrypt_keystore_dir: /etc/jgroups-encrypt-secret-volume
+  encrypt_name:
+  encrypt_password:
+  cluster_password: '[a-zA-Z0-9]{8}'
+  ping_protocol: openshift.DNS_PING
 
 image_stream:
   namespace: openshift
@@ -57,10 +63,12 @@ sso:
   truststore:
   truststore_password:
   truststore_secret: sso-app-secret
+  truststore_dir: /etc/sso-secret-volume
 
 postgres:
+  port: 5432
   image_stream_tag: 10
   max_connections:  
   shared_buffers:
 
-memory_limit: 1Gi
+

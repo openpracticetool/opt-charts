@@ -1,16 +1,17 @@
-- apiVersion: v1
-  kind: Service
-  metadata:
-    annotations:
-      description: The JGroups ping port for clustering.
-      service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
-    labels:
-      application: ${APPLICATION_NAME}
-    name: ${APPLICATION_NAME}-ping
-  spec:
-    clusterIP: None
-    ports:
-    - name: ping
-      port: 8888
-    selector:
-      deploymentConfig: ${APPLICATION_NAME}
+{{- if .Values.svc }}
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    description: The JGroups ping port for clustering.
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+  labels:
+    application: {{ .Values.appName }}
+  name: {{ .Values.appName }}-ping
+spec:
+  clusterIP: None
+  ports:
+  - name: ping
+    port: {{ .Values.svc.ping_port }}
+  selector:
+    application: {{ .Values.appName }}

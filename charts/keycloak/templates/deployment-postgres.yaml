@@ -1,49 +1,48 @@
-
-- apiVersion: v1
-kind: DeploymentConfig
+apiVersion: v1
+kind: Deployment
 metadata:
   labels:
-    application: ${APPLICATION_NAME}
-  name: ${APPLICATION_NAME}-postgresql
+    application: {{ .Values.appName }}
+  name: {{ .Values.appName }}-postgresql
 spec:
   replicas: 1
   selector:
-    deploymentConfig: ${APPLICATION_NAME}-postgresql
+    app: {{ .Values.appName }}-postgresql
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        application: ${APPLICATION_NAME}
-        deploymentConfig: ${APPLICATION_NAME}-postgresql
-      name: ${APPLICATION_NAME}-postgresql
+        application: {{ .Values.appName }}
+        deployment: {{ .Values.appName }}-postgresql
+      name: {{ .Values.appName }}-postgresql
     spec:
       containers:
       - env:
         - name: POSTGRESQL_USER
-          value: ${DB_USERNAME}
+          value: {{ .Values.database.username }}
         - name: POSTGRESQL_PASSWORD
-          value: ${DB_PASSWORD}
+          value: {{ .Values.database.password }}
         - name: POSTGRESQL_DATABASE
-          value: ${DB_DATABASE}
+          value: {{ .Values.database.name }}
         - name: POSTGRESQL_MAX_CONNECTIONS
-          value: ${POSTGRESQL_MAX_CONNECTIONS}
+          value: {{ .Values.postgres.max_connections }}
         - name: POSTGRESQL_MAX_PREPARED_TRANSACTIONS
-          value: ${POSTGRESQL_MAX_CONNECTIONS}
+          value: {{ .Values.postgres.max_connections }}
         - name: POSTGRESQL_SHARED_BUFFERS
-          value: ${POSTGRESQL_SHARED_BUFFERS}
+          value: {{ .Values.postgres.shared_buffers }}
         image: postgresql
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 3
           initialDelaySeconds: 90
-          'successThreshold:': 1
+          successThreshold: 1
           tcpSocket:
-            port: 5432
+            port: {{ .Values.postgres.port }}
           timeoutSeconds: 10
-        name: ${APPLICATION_NAME}-postgresql
+        name: {{ .Values.appName }}-postgresql
         ports:
-        - containerPort: 5432
+        - containerPort: {{ .Values.postgres.port }}
           protocol: TCP
         readinessProbe:
           exec:
@@ -55,24 +54,13 @@ spec:
               'SELECT 1'
           failureThreshold: 3
           initialDelaySeconds: 90
-          'successThreshold:': 1
+          successThreshold: 1
           timeoutSeconds: 10
         volumeMounts:
         - mountPath: /var/lib/pgsql/data
-          name: ${APPLICATION_NAME}-postgresql-pvol
+          name: {{ .Values.postgres.port }}-postgresql-pvol
       terminationGracePeriodSeconds: 60
       volumes:
-      - name: ${APPLICATION_NAME}-postgresql-pvol
+      - name: {{ .Values.appName }}-postgresql-pvol
         persistentVolumeClaim:
-          claimName: ${APPLICATION_NAME}-postgresql-claim
-  triggers:
-  - imageChangeParams:
-      automatic: true
-      containerNames:
-      - ${APPLICATION_NAME}-postgresql
-      from:
-        kind: ImageStreamTag
-        name: postgresql:${POSTGRESQL_IMAGE_STREAM_TAG}
-        namespace: ${IMAGE_STREAM_NAMESPACE}
-    type: ImageChange
-  - type: ConfigChange
+          claimName: {{ .Values.appName }}-postgresql-claim

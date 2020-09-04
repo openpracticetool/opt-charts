@@ -1,14 +1,15 @@
-- apiVersion: v1
-  kind: Service
-  metadata:
-    annotations:
-      description: The database server's port.
-    labels:
-      application: ${APPLICATION_NAME}
-    name: ${APPLICATION_NAME}-postgresql
-  spec:
-    ports:
-    - port: 5432
-      targetPort: 5432
-    selector:
-      deploymentConfig: ${APPLICATION_NAME}-postgresql
+{{- if .Values.svc }}
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    description: The database server's port.
+  labels:
+    application: {{ .Values.appName }}
+  name: {{ .Values.appName }}-postgresql
+spec:
+  ports:
+  - port: {{ .Values.postgres.port }}
+    targetPort: {{ .Values.postgres.port }}
+  selector:
+    application: {{ .Values.appName }}-postgresql

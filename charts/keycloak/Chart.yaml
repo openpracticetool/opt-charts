@@ -1,0 +1,10 @@
+apiVersion: v2
+appVersion: "v0.0.1"
+description: A Helm chart for deploying Keycloak on OpenShift 🔗
+name: keycloak
+version: 0.0.1
+home: https://github.com/openpracticetool/opt-charts
+maintainers:
+- name: camedeir
+- name: gsampaio
+- name: lribas
