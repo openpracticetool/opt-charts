@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ .Values.api.name }}
+    app.kubernetes.io/part-of: apicurio
+  name: {{ .Values.api.name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      deploymentconfig: {{ .Values.api.name }}
+      app: {{ .Values.api.name }}
+  template:
+    metadata:
+      labels:
+        deploymentconfig: {{ .Values.api.name }}
+        app: {{ .Values.api.name }}
+    spec:
+      containers:
+        - resources:
+            limits:
+              cpu: '1'
+              memory: 1700Mi
+            requests:
+              cpu: 100m
+              memory: 800Mi
+          readinessProbe:
+            httpGet:
+              path: /system/ready
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 15
+            timeoutSeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          name: {{ .Values.api.name }}
+          livenessProbe:
+            httpGet:
+              path: /system/ready
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          env:
+          {{- if .Values.loggingEnabled }}
+          - name: APICURIO_LOGGING_LEVEL
+            value: debug
+          {{- end }}
+          - name: APICURIO_DB_CONNECTION_URL
+            value: {{ .Values.database.url }}
+          - name: APICURIO_DB_DRIVER_NAME
+            value: {{ .Values.database.driver }}
+          - name: APICURIO_DB_INITIALIZE
+            value: {{ .Values.database.initialize | quote }}
+          - name: APICURIO_DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: apicurio-secret
+                key: db-password
+          - name: APICURIO_DB_TYPE
+            value: {{ .Values.database.type }}
+          - name: APICURIO_DB_USER_NAME
+            valueFrom:
+              secretKeyRef:
+                name: apicurio-secret
+                key: db-user
+          - name: APICURIO_MICROCKS_API_URL
+            value: {{ .Values.microcks.api.url }}
+          - name: APICURIO_MICROCKS_CLIENT_ID
+            value: {{ .Values.microcks.client.id }}
+          - name: APICURIO_MICROCKS_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: apicurio-secret
+                key: apicurio-microcks-client-secret
+          - name: APICURIO_KC_AUTH_URL
+            value: {{ .Values.keycloak.url }}/auth
+          - name: APICURIO_KC_REALM
+            value: {{ .Values.keycloak.realm }}
+          #- name: APICURIO_KC_CLIENT_ID
+          #  value: {{ .Values.keycloak.client.id }}
+          #- name: APICURIO_KC_CLIENT_SECRET
+          #  valueFrom:
+          #    secretKeyRef:
+          #      name: apicurio-secret
+          #      key: apicurio-kc-client-secret
+          - name: APICURIO_SHARE_FOR_EVERYONE
+            value: {{ .Values.uiFeatureShareForEveryone | quote }}
+          - name: JAVA_TOOL_OPTIONS
+            value: {{ .Values.api.jvmArgs }}
+          image: {{ .Values.api.image }}
+          imagePullPolicy: {{ .Values.api.imagePullPolicy }}
+          ports:
+            - containerPort: 8080
+      restartPolicy: Always

@@ -1,0 +1,49 @@
+kind: Route
+apiVersion: v1
+metadata:
+  name: {{ .Values.api.name }}
+  labels:
+    app: {{ .Values.api.name }}
+spec:
+  host: {{ .Values.ui.hub.api.url }}
+  to:
+    kind: Service
+    name: {{ .Values.api.name }}
+  port:
+    targetPort: {{ .Values.api.port | quote }}
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+---
+kind: Route
+apiVersion: v1
+metadata:
+  name: {{ .Values.ws.name }}
+  labels:
+    app: {{ .Values.ws.name }}
+spec:
+  host: {{ .Values.ui.editing.url }}
+  to:
+    kind: Service
+    name: {{ .Values.ws.name }}
+  port:
+    targetPort: {{ .Values.ws.port | quote }}
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+---
+kind: Route
+apiVersion: v1
+metadata:
+  name: {{ .Values.ui.name }}
+  labels:
+    app: {{ .Values.ui.name }}
+spec:
+  to:
+    kind: Service
+    name: {{ .Values.ui.name }}
+  port:
+    targetPort: {{ .Values.ui.port | quote }}
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
