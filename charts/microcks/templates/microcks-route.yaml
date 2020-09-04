@@ -1,0 +1,17 @@
+kind: Route
+apiVersion: v1
+metadata:
+  name: {{ .Values.name }}
+  labels:
+    app: {{ .Values.name }}
+    group: {{ .Values.name }}
+spec:
+  host: {{ .Values.host }}
+  to:
+    kind: Service
+    name: {{ .Values.name }}
+  port:
+    targetPort: spring
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect

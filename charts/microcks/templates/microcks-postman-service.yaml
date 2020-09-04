@@ -1,0 +1,20 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ .Values.name }}-postman-runtime
+  labels:
+    app: {{ .Values.name }}
+    container: postman-runtime
+    group: {{ .Values.name }}
+spec:
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 3000
+    name: postman-runtime
+  type: ClusterIP
+  sessionAffinity: None
+  selector:
+    app: {{ .Values.name }}
+    container: postman-runtime
+    group: {{ .Values.name }}

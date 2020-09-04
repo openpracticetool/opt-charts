@@ -1,0 +1,21 @@
+name: microcks
+host: microcks.example.com
+
+image:
+  repo: quay.io/microcks/microcks
+  tag: nightly
+
+postman:
+  image:
+    repo: quay.io/microcks/microcks-postman-runtime
+    tag: latest
+
+mongodb:
+  user: microcks
+  pass: microcks
+  resources:
+    limits:
+      memory: 512Mi
+
+keycloack:
+  host: sso.example.com
