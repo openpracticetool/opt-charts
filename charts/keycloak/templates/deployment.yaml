@@ -1,0 +1,139 @@
+apiVersion: v1
+kind: Deployment
+metadata:
+  labels:
+    application: {{ .Values.appName }}
+  name: {{ .Values.appName }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    deploymentConfig: {{ .Values.appName }}
+  strategy:
+    type: {{ .Values.deployment.strategy.type }}
+  template:
+    metadata:
+      labels:
+        application: {{ .Values.appName }}
+        deploymentConfig: {{ .Values.appName }}
+      name: {{ .Values.appName }}
+    spec:
+      containers:
+      - env:
+        - name: SSO_HOSTNAME
+          value: {{ .Values.route.sso_host }}
+        - name: DB_SERVICE_PREFIX_MAPPING
+          value: {{ .Values.appName }}-postgresql=DB
+        - name: DB_JNDI
+          value: {{ .Values.database.jndi }}
+        - name: DB_USERNAME
+          value: {{ .Values.database.username }}
+        - name: DB_PASSWORD
+          value: {{ .Values.database.password }}
+        - name: DB_DATABASE
+          value: {{ .Values.database.name }}
+        - name: TX_DATABASE_PREFIX_MAPPING
+          value: {{ .Values.appName }}-postgresql=DB
+        - name: DB_MIN_POOL_SIZE
+          value: {{ .Values.database.min_pool_size }}
+        - name: DB_MAX_POOL_SIZE
+          value: {{ .Values.database.max_pool_size }}
+        - name: DB_TX_ISOLATION
+          value: {{ .Values.database.db_tx_isolation }}
+        - name: JGROUPS_PING_PROTOCOL
+          value: {{ .Values.jgroups.ping_protocol }}
+        - name: OPENSHIFT_DNS_PING_SERVICE_NAME
+          value: {{ .Values.appName }}-ping
+        - name: OPENSHIFT_DNS_PING_SERVICE_PORT
+          value: "8888"
+        - name: HTTPS_KEYSTORE_DIR
+          value: {{ .Values.keystore.dir }}
+        - name: HTTPS_KEYSTORE
+          value: {{ .Values.keystore.filename }}
+        - name: HTTPS_KEYSTORE_TYPE
+          value:  {{ .Values.keystore.type }}
+        - name: HTTPS_NAME
+          value: {{ .Values.certificate_server.name }}
+        - name: HTTPS_PASSWORD
+          value: {{ .Values.keystore.password }}
+        - name: JGROUPS_ENCRYPT_SECRET
+          value: {{ .Values.jgroups.encrypt_secret }}
+        - name: JGROUPS_ENCRYPT_KEYSTORE_DIR
+          value: {{ .Values.jgroups.encrypt_keystore_dir }}
+        - name: JGROUPS_ENCRYPT_KEYSTORE
+          value: {{ .Values.jgroups.encrypt_keystore }}
+        - name: JGROUPS_ENCRYPT_NAME
+          value: {{ .Values.jgroups.encrypt_name }}
+        - name: JGROUPS_ENCRYPT_PASSWORD
+          value: {{ .Values.jgroups.encrypt_password }}
+        - name: JGROUPS_CLUSTER_PASSWORD
+          value: {{ .Values.jgroups.cluster_password }}
+        - name: SSO_ADMIN_USERNAME
+          value: {{ .Values.sso.cluster_password }}
+        - name: SSO_ADMIN_PASSWORD
+          value: {{ .Values.sso.cluster_password }}
+        - name: SSO_REALM
+          value: {{ .Values.sso.cluster_password }}
+        - name: SSO_SERVICE_USERNAME
+          value: {{ .Values.sso.cluster_password }}
+        - name: SSO_SERVICE_PASSWORD
+          value: {{ .Values.sso.cluster_password }}
+        - name: SSO_TRUSTSTORE
+          value: {{ .Values.sso.cluster_password }}
+        - name: SSO_TRUSTSTORE_DIR
+          value: {{ .Values.sso.truststore_dir }}
+        - name: SSO_TRUSTSTORE_PASSWORD
+          value: {{ .Values.sso.truststore_password }}
+        image: {{ .Values.appName }}
+        imagePullPolicy: Always
+        livenessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - /opt/eap/bin/livenessProbe.sh
+          initialDelaySeconds: 60
+        name: {{ .Values.appName }}
+        ports:
+        - containerPort: {{ .Values.svc.jolokia_port }}
+          name: jolokia
+          protocol: TCP
+        - containerPort: {{ .Values.svc.http_port }}
+          name: http
+          protocol: TCP
+        - containerPort: {{ .Values.svc.https_port }}
+          name: https
+          protocol: TCP
+        - containerPort: {{ .Values.svc.ping_port }}
+          name: ping
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - /opt/eap/bin/readinessProbe.sh
+        resources:
+          limits:
+            memory: ${MEMORY_LIMIT}
+        volumeMounts:
+        - mountPath: {{ .Values.keystore.dir }}
+          name: eap-keystore-volume
+          readOnly: true
+        - mountPath: {{ .Values.jgroups.encrypt_keystore_dir }}
+          name: eap-jgroups-keystore-volume
+          readOnly: true
+        - mountPath: {{ .Values.sso.truststore_dir }}
+          name: sso-truststore-volume
+          readOnly: true
+      terminationGracePeriodSeconds: 75
+      volumes:
+      - name: eap-keystore-volume
+        secret:
+          secretName: {{ .Values.keystore.secret }}
+      - name: eap-jgroups-keystore-volume
+        secret:
+          secretName:  {{ .Values.jgroups.encrypt_secret }}
+      - name: sso-truststore-volume
+        secret:
+          secretName: {{ .Values.sso.truststore_secret }}
+  

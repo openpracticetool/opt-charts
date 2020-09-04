@@ -1,0 +1,66 @@
+---
+appName: &name sso
+
+service:
+  type: ClusterIP
+  http_port: 8080
+
+deployment: 
+  replicas: 1
+  strategy:
+    type: Recreate
+    
+route:
+  http_host: null
+  http_targetPort: 8080
+  https_host: null
+  https_targetPort: 443
+  sso_host: null
+
+database:
+  name: root
+  jndi: java:jboss/datasources/KeycloakDS
+  min_pool_size:
+  max_pool_size:
+  username: user[a-zA-Z0-9]{3}
+  password: [a-zA-Z0-9]{8}
+  volume_capacity: 1Gi
+  db_tx_isolation: 
+    
+  
+keystore:
+  secret_name: sso-app-secret
+  filename: keystore.jks
+  type: 
+  password:
+
+certificate_server:
+  name:
+
+jgroups:
+  JGROUPS_ENCRYPT_SECRET: sso-app-secret
+  JGROUPS_ENCRYPT_KEYSTORE: jgroups.jceks
+  JGROUPS_ENCRYPT_NAME: 
+    JGROUPS_ENCRYPT_PASSWORD: 
+      JGROUPS_CLUSTER_PASSWORD: '[a-zA-Z0-9]{8}'
+
+
+image_stream:
+  namespace: openshift
+
+sso:
+  admin_username: '[a-zA-Z0-9]{8}'
+  admin_password: [a-zA-Z0-9]{8}
+  realm:
+  service_username:
+  service_password:
+  truststore:
+  truststore_password:
+  truststore_secret: sso-app-secret
+
+postgres:
+  image_stream_tag: 10
+  max_connections:  
+  shared_buffers:
+
+memory_limit: 1Gi
