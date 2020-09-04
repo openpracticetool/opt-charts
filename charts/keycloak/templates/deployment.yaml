@@ -28,7 +28,7 @@ spec:
         - name: DB_USERNAME
           value: {{ .Values.database.username }}
         - name: DB_PASSWORD
-          value: {{ .Values.database.password }}
+          value: {{ .Values.database.password | quote }}
         - name: DB_DATABASE
           value: {{ .Values.database.name }}
         - name: TX_DATABASE_PREFIX_MAPPING
@@ -64,9 +64,9 @@ spec:
         - name: JGROUPS_ENCRYPT_NAME
           value: {{ .Values.jgroups.encrypt_name }}
         - name: JGROUPS_ENCRYPT_PASSWORD
-          value: {{ .Values.jgroups.encrypt_password }}
+          value: {{ .Values.jgroups.encrypt_password | quote }}
         - name: JGROUPS_CLUSTER_PASSWORD
-          value: {{ .Values.jgroups.cluster_password }}
+          value: {{ .Values.jgroups.cluster_password | quote }}
         - name: SSO_ADMIN_USERNAME
           value: {{ .Values.sso.cluster_password }}
         - name: SSO_ADMIN_PASSWORD
@@ -136,4 +136,3 @@ spec:
       - name: sso-truststore-volume
         secret:
           secretName: {{ .Values.sso.truststore_secret }}
-  

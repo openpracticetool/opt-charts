@@ -1,0 +1,51 @@
+apiVersion: v1
+entries:
+  apicurio:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2020-09-04T11:07:46.382513-04:00"
+    description: A Helm chart for Kubernetes
+    digest: 6b61e0dbd9ce084415ec432888d14c500cb3cf6ce68957751cdba1265f38ca01
+    name: apicurio
+    type: application
+    urls:
+    - https://openpracticetool.github.io/opt-charts/apicurio-0.1.0.tgz
+    version: 0.1.0
+  keycloak:
+  - apiVersion: v2
+    appVersion: v0.0.1
+    created: "2020-09-04T11:07:46.383094-04:00"
+    description: "A Helm chart for deploying Keycloak on OpenShift \U0001F517"
+    digest: 42633e8fe9860b485a78c41a28ee00a48842d229451237e4792f6ef199eaba0a
+    home: https://github.com/openpracticetool/opt-charts
+    maintainers:
+    - name: camedeir
+    - name: gsampaio
+    - name: lribas
+    name: keycloak
+    urls:
+    - https://openpracticetool.github.io/opt-charts/keycloak-0.0.1.tgz
+    version: 0.0.1
+  microcks:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2020-09-04T11:07:46.383491-04:00"
+    description: A Helm chart for Kubernetes
+    digest: fd6d756097dcda00bdcded2658071db27b61a73951743b87981d1db14c6ab89d
+    name: microcks
+    type: application
+    urls:
+    - https://openpracticetool.github.io/opt-charts/microcks-0.1.0.tgz
+    version: 0.1.0
+  rh-sso:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2020-09-04T11:07:46.383934-04:00"
+    description: A Helm chart for Kubernetes
+    digest: 29309c26b2df9732bd396aca341fd944fae85e4109ecec1bd5bfc1c8eead082d
+    name: rh-sso
+    type: application
+    urls:
+    - https://openpracticetool.github.io/opt-charts/rh-sso-0.1.0.tgz
+    version: 0.1.0
+generated: "2020-09-04T11:07:46.381188-04:00"

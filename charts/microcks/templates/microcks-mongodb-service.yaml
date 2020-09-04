@@ -1,20 +1,20 @@
 kind: Service
-  apiVersion: v1
-  metadata:
-    name: {{ .Values.name }}-mongodb
-    labels:
-      app: {{ .Values.name }}
-      container: mongodb
-      group: {{ .Values.name }}
-  spec:
-    ports:
-    - name: mongodb
-      protocol: TCP
-      port: 27017
-      targetPort: 27017
-    selector:
-      app: {{ .Values.name }}
-      container: mongodb
-      group: {{ .Values.name }}
-    type: ClusterIP
-    sessionAffinity: None
+apiVersion: v1
+metadata:
+  name: {{ .Values.name }}-mongodb
+  labels:
+    app: {{ .Values.name }}
+    container: mongodb
+    group: {{ .Values.name }}
+spec:
+  ports:
+  - name: mongodb
+    protocol: TCP
+    port: 27017
+    targetPort: 27017
+  selector:
+    app: {{ .Values.name }}
+    container: mongodb
+    group: {{ .Values.name }}
+  type: ClusterIP
+  sessionAffinity: None

@@ -5,7 +5,7 @@ service:
   type: ClusterIP
   http_port: 8080
 
-deployment: 
+deployment:
   replicas: 1
   strategy:
     type: Recreate
@@ -16,7 +16,7 @@ svc:
   https_port: 8443
   jolokia_port: 8778
   ping_port: 8888
-  
+
 route:
   http_host: null
   https_host: null
@@ -27,15 +27,15 @@ database:
   jndi: java:jboss/datasources/KeycloakDS
   min_pool_size:
   max_pool_size:
-  username: user[a-zA-Z0-9]{3}
-  password: [a-zA-Z0-9]{8}
+  username: "user[a-zA-Z0-9]{3}"
+  password: "[a-zA-Z0-9]{8}"
   volume_capacity: 1Gi
-  db_tx_isolation: 
+  db_tx_isolation:
 
 keystore:
   secret: sso-app-secret
   filename: keystore.jks
-  type: 
+  type:
   password:
   dir: /etc/eap-secret-volume
 
@@ -48,15 +48,15 @@ jgroups:
   encrypt_keystore_dir: /etc/jgroups-encrypt-secret-volume
   encrypt_name:
   encrypt_password:
-  cluster_password: '[a-zA-Z0-9]{8}'
+  cluster_password: "[a-zA-Z0-9]{8}"
   ping_protocol: openshift.DNS_PING
 
 image_stream:
   namespace: openshift
 
 sso:
-  admin_username: '[a-zA-Z0-9]{8}'
-  admin_password: [a-zA-Z0-9]{8}
+  admin_username: "[a-zA-Z0-9]{8}"
+  admin_password: "[a-zA-Z0-9]{8}"
   realm:
   service_username:
   service_password:
@@ -68,7 +68,7 @@ sso:
 postgres:
   port: 5432
   image_stream_tag: 10
-  max_connections:  
+  max_connections:
   shared_buffers:
 
 

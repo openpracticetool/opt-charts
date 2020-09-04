@@ -13,3 +13,4 @@ spec:
     targetPort: {{ .Values.postgres.port }}
   selector:
     application: {{ .Values.appName }}-postgresql
+{{- end }}

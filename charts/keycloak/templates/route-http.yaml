@@ -12,3 +12,4 @@ spec:
   host: {{ .Values.route.http_host }}
   to:
     name: {{ .Values.appName }}
+{{- end }}

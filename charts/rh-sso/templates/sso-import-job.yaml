@@ -22,12 +22,12 @@ spec:
           'done;'
         ]
         env:
-          - name: SSO_URL
-            value: {{ .Values.name | quoute }}
-          - name: SSO_ADMIN_USER
-            value: {{ .Values.admin.user | quote }}
-          - name: SSO_ADMIN_PASS
-            value: {{ .Values.admin.pass | quote }}
+        - name: SSO_URL
+          value: {{ .Values.name | quote }}
+        - name: SSO_ADMIN_USER
+          value: {{ .Values.admin.user | quote }}
+        - name: SSO_ADMIN_PASS
+          value: {{ .Values.admin.pass | quote }}
         volumeMounts:
         - name: sso-reamls
           mountPath: /config/realms

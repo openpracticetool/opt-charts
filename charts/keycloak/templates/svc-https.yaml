@@ -13,3 +13,4 @@ spec:
     targetPort: {{ .Values.svc.https_port }}
   selector:
     application: {{ .Values.appName }}
+{{- end }}

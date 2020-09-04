@@ -20,15 +20,15 @@ spec:
       containers:
       - env:
         - name: POSTGRESQL_USER
-          value: {{ .Values.database.username }}
+          value: {{ .Values.database.username | quote }}
         - name: POSTGRESQL_PASSWORD
-          value: {{ .Values.database.password }}
+          value: {{ .Values.database.password | quote }}
         - name: POSTGRESQL_DATABASE
           value: {{ .Values.database.name }}
         - name: POSTGRESQL_MAX_CONNECTIONS
           value: {{ .Values.postgres.max_connections }}
         - name: POSTGRESQL_MAX_PREPARED_TRANSACTIONS
-          value: {{ .Values.postgres.max_connections }}
+          value: {{ .Values.postgres.max_connections | quote }}
         - name: POSTGRESQL_SHARED_BUFFERS
           value: {{ .Values.postgres.shared_buffers }}
         image: postgresql

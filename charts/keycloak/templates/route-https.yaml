@@ -14,3 +14,4 @@ spec:
     termination: passthrough
   to:
     name: secure-{{ .Values.appName }}
+{{- end }}
