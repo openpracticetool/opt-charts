@@ -1,0 +1,39 @@
+{{- if .Values.reamls }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: sso-import-reamls
+spec:
+  parallelism: 1
+  completions: 1
+  activeDeadlineSeconds: 1800
+  backoffLimit: 6
+  template:
+    metadata:
+      name: sso-import-reamls
+    spec:
+      containers:
+      - name: sso-import-reamls
+        image: curlimages/curl:latest
+        command: [
+          'ADMIN_BEARER=$(curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -d "grant_type=password&client_id=master&username=${SSO_ADMIN_USER}&password=${SSO_ADMIN_PASS}" https://${SSO_URL}/auth/realms/master/protocol/openid-connect/token | jq .access_token );',
+          'for file in $(ls -A1 /config/realms);',
+          'do curl -X POST -H "Authorization: Bearer ${ADMIN_BEARER}" -H "Content-Type: application/x-www-form-urlencoded" -d @/config/realms/$file https://${SSO_URL}/auth/admin/realms;',
+          'done;'
+        ]
+        env:
+          - name: SSO_URL
+            value: {{ .Values.name | quoute }}
+          - name: SSO_ADMIN_USER
+            value: {{ .Values.admin.user | quote }}
+          - name: SSO_ADMIN_PASS
+            value: {{ .Values.admin.pass | quote }}
+        volumeMounts:
+        - name: sso-reamls
+          mountPath: /config/realms
+      restartPolicy: OnFailure
+      volumes:
+      - name: sso-reamls
+        configMap:
+          name: sso-reamls
+{{- end}}

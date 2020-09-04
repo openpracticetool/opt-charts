@@ -1,0 +1,39 @@
+name: sso
+version: "7.4.0.GA"
+jgroupClusterPassword: sso74
+admin:
+  user: sso
+  pass: sso
+service:
+  user: sso
+  pass: sso
+realm: redhat
+
+resources:
+  limits:
+    memory: "1Gi"
+
+imagestream:
+  namespace: openshift
+  name: sso74-openshift-rhel8
+  tag: "7.4"
+
+database:
+  jndi: java:jboss/datasources/KeycloakDS
+  user: sso
+  pass: sso
+  name: root
+  size: "1Gi"
+  # txIsolation: "TRANSACTION_NONE"
+  #poolSize:
+  #  min: "100"
+  #  max: "1000"
+
+
+reamls:
+  - name: apicurio-realm.json
+    content: |-
+      {
+        "id": "apicurio",
+        "realm": "apicurio"
+      }

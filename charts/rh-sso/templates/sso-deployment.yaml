@@ -1,0 +1,126 @@
+apiVersion: v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    application: {{ .Values.name }}
+  name: {{ .Values.name }}
+spec:
+  replicas: 1
+  selector:
+    deploymentConfig: {{ .Values.name }}
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        application: {{ .Values.name }}
+        deploymentConfig: {{ .Values.name }}
+      name: {{ .Values.name }}
+    spec:
+      containers:
+        - readinessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - '-c'
+                - /opt/eap/bin/readinessProbe.sh
+{{ toYaml .Values.resources | indent 10 }}
+          name: {{ .Values.name }}
+          livenessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - '-c'
+                - /opt/eap/bin/livenessProbe.sh
+            initialDelaySeconds: 60
+          env:
+            - name: SSO_HOSTNAME
+            - name: DB_SERVICE_PREFIX_MAPPING
+              value: {{ .Values.name }}-postgresql=DB
+            - name: DB_JNDI
+              value: {{ .Values.database.jndi | quote }}
+            - name: DB_USERNAME
+              value: {{ .Values.database.user | quote }}
+            - name: DB_PASSWORD
+              value: {{ .Values.database.pass | quote }}
+            - name: DB_DATABASE
+              value: {{ .Values.database.name | quote }}
+            - name: TX_DATABASE_PREFIX_MAPPING
+              value: {{ .Values.name }}-postgresql=DB
+{{- if .Values.database.poolSize }}
+            - name: DB_MIN_POOL_SIZE
+              value: {{ .Values.database.poolSize.min | quote }}
+            - name: DB_MAX_POOL_SIZE
+              value: {{ .Values.database.poolSize.max | quote }}
+{{- end }}
+            - name: DB_TX_ISOLATION
+              value: {{ .Values.database.txIsolation | quote }}
+            - name: JGROUPS_PING_PROTOCOL
+              value: openshift.DNS_PING
+            - name: OPENSHIFT_DNS_PING_SERVICE_NAME
+              value: {{ .Values.name }}-ping
+            - name: OPENSHIFT_DNS_PING_SERVICE_PORT
+              value: '8888'
+            - name: X509_CA_BUNDLE
+              value: >-
+                /var/run/configmaps/service-ca/service-ca.crt
+                /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+            - name: JGROUPS_CLUSTER_PASSWORD
+              value: {{ .Values.jgroupClusterPassword | quote }}
+            - name: SSO_ADMIN_USERNAME
+              value: {{ .Values.admin.user | quote }}
+            - name: SSO_ADMIN_PASSWORD
+              value: {{ .Values.admin.pass | quote }}
+            - name: SSO_REALM
+              value: {{ .Values.realm | quote }}
+            - name: SSO_SERVICE_USERNAME
+              value: {{ .Values.service.user | quote }}
+            - name: SSO_SERVICE_PASSWORD
+              value: {{ .Values.service.pass | quote }}
+          ports:
+            - containerPort: 8778
+              name: jolokia
+              protocol: TCP
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+            - containerPort: 8443
+              name: https
+              protocol: TCP
+            - containerPort: 8888
+              name: ping
+              protocol: TCP
+          imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /etc/x509/https
+              name: sso-x509-https-volume
+              readOnly: true
+            - mountPath: /etc/x509/jgroups
+              name: sso-x509-jgroups-volume
+              readOnly: true
+            - mountPath: /var/run/configmaps/service-ca
+              name: service-ca
+              readOnly: true
+          image: ''
+      terminationGracePeriodSeconds: 75
+      volumes:
+        - name: sso-x509-https-volume
+          secret:
+            secretName: sso-x509-https-secret
+        - name: sso-x509-jgroups-volume
+          secret:
+            secretName: sso-x509-jgroups-secret
+        - configMap:
+            name: {{ .Values.name }}-service-ca
+          name: service-ca
+  triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+          - {{ .Values.name }}
+        from:
+          kind: ImageStreamTag
+          name: {{ .Values.imagestream.name }}:{{ .Values.imagestream.tag | default "latest" }}
+          namespace: {{ .Values.imagestream.namespace }}
+      type: ImageChange
+    - type: ConfigChange

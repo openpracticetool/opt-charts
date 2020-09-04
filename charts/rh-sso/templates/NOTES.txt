@@ -1,0 +1,8 @@
+A new persistent RH-SSO service (using PostgreSQL) has been created in your
+  project. The admin username/password for accessing the master realm via the
+  RH-SSO console is {{ .Values.admin.user }}/{{ .Values.admin.pass }}. The
+  username/password for accessing the PostgreSQL database "{{ .Values.database.name }}" is
+  {{ .Values.database.user }}/{{ .Values.database.pass }}. The HTTPS keystore used for serving secure
+  content, the JGroups keystore used for securing JGroups communications, and
+  server truststore used for securing RH-SSO requests were automatically created
+  via OpenShift's service serving x509 certificate secrets.

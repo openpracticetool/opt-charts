@@ -1,0 +1,11 @@
+{{- if .Values.reamls }}
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: sso-reamls
+data:
+{{- range $val := .Values.reamls }}
+{{ $val.name | indent 2 }}: |-
+{{ $val.content | indent 4 }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,14 @@
+apiVersion: v1
+id: {{ .Values.name }}-https
+kind: Route
+metadata:
+  annotations:
+    description: Route for application's https service.
+  labels:
+    application: {{ .Values.name }}
+  name: {{ .Values.name }}
+spec:
+  tls:
+    termination: reencrypt
+  to:
+    name: {{ .Values.name }}
