@@ -1,0 +1,16 @@
+{{- if .Values.route }}
+apiVersion: v1
+id: {{ .Values.appName }}-https
+kind: Route
+metadata:
+  annotations:
+    description: Route for application's https service.
+  labels:
+    application: {{ .Values.appName }}
+  name: secure-{{ .Values.appName }}
+spec:
+  host: {{ .Values.route.https_host }}
+  tls:
+    termination: passthrough
+  to:
+    name: secure-{{ .Values.appName }}

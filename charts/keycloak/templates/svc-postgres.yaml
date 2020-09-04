@@ -1,0 +1,15 @@
+{{- if .Values.svc }}
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    description: The database server's port.
+  labels:
+    application: {{ .Values.appName }}
+  name: {{ .Values.appName }}-postgresql
+spec:
+  ports:
+  - port: {{ .Values.postgres.port }}
+    targetPort: {{ .Values.postgres.port }}
+  selector:
+    application: {{ .Values.appName }}-postgresql

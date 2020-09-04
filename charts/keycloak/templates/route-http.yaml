@@ -1,0 +1,14 @@
+{{- if .Values.route }}
+apiVersion: v1
+id: {{ .Values.appName }}-http
+kind: Route
+metadata:
+  annotations:
+    description: Route for application's http service.
+  labels:
+    application: {{ .Values.appName }}
+  name: {{ .Values.appName }}
+spec:
+  host: {{ .Values.route.http_host }}
+  to:
+    name: {{ .Values.appName }}
