@@ -1,14 +1,25 @@
 apiVersion: v1
 entries:
+  microcks:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2020-09-05T16:52:23.292064-04:00"
+    description: A Helm chart for Kubernetes
+    digest: c966e21dd1af6a21bb0bb76537e4e9328c0bed037cf7b0b35cdc93628201a6c8
+    name: microcks
+    type: application
+    urls:
+    - https://github.com/openpracticetool/opt-charts/releases/download/microcks-0.1.0/microcks-0.1.0.tgz
+    version: 0.1.0
   rh-sso:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2020-09-04T11:07:46.383934-04:00"
+    created: "2020-09-05T16:52:23.292567-04:00"
     description: A Helm chart for Kubernetes
-    digest: 29309c26b2df9732bd396aca341fd944fae85e4109ecec1bd5bfc1c8eead082d
+    digest: c121b77713ca2b94081bdbc57d0ae201179bee200e19e7df7a28032f3b6eb643
     name: rh-sso
     type: application
     urls:
     - https://github.com/openpracticetool/opt-charts/releases/download/rh-sso-0.1.0/rh-sso-0.1.0.tgz
     version: 0.1.0
-generated: "2020-09-04T11:07:46.381188-04:00"
+generated: "2020-09-05T16:52:23.291407-04:00"
