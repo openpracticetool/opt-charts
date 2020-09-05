@@ -1,39 +1,60 @@
 {{- if .Values.reamls }}
-apiVersion: batch/v1
-kind: Job
+apiVersion: batch/v1beta1
+kind: CronJob
 metadata:
   name: sso-import-reamls
 spec:
-  parallelism: 1
-  completions: 1
-  activeDeadlineSeconds: 1800
-  backoffLimit: 6
-  template:
-    metadata:
-      name: sso-import-reamls
+  schedule: '*/15 * * * *'
+  concurrencyPolicy: Replace
+  suspend: false
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 1
+  jobTemplate:
     spec:
-      containers:
-      - name: sso-import-reamls
-        image: curlimages/curl:latest
-        command: [
-          'ADMIN_BEARER=$(curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -d "grant_type=password&client_id=master&username=${SSO_ADMIN_USER}&password=${SSO_ADMIN_PASS}" https://${SSO_URL}/auth/realms/master/protocol/openid-connect/token | jq .access_token );',
-          'for file in $(ls -A1 /config/realms);',
-          'do curl -X POST -H "Authorization: Bearer ${ADMIN_BEARER}" -H "Content-Type: application/x-www-form-urlencoded" -d @/config/realms/$file https://${SSO_URL}/auth/admin/realms;',
-          'done;'
-        ]
-        env:
-        - name: SSO_URL
-          value: {{ .Values.name | quote }}
-        - name: SSO_ADMIN_USER
-          value: {{ .Values.admin.user | quote }}
-        - name: SSO_ADMIN_PASS
-          value: {{ .Values.admin.pass | quote }}
-        volumeMounts:
-        - name: sso-reamls
-          mountPath: /config/realms
-      restartPolicy: OnFailure
-      volumes:
-      - name: sso-reamls
-        configMap:
-          name: sso-reamls
+      parallelism: 1
+      completions: 1
+      activeDeadlineSeconds: 1800
+      backoffLimit: 6
+      template:
+        metadata:
+          name: sso-import-reamls
+        spec:
+          containers:
+          - name: sso-import-reamls
+            image: quay.io/camedeir/curl:alpine
+            command:
+              - "/bin/sh"
+              - "-c"
+              - |
+                for file in $(ls -A1 /config/realms | grep -i .json);
+                do
+                  echo "Realm file will be charged: $file";
+                  ADMIN_BEARER=$(curl -sSL -k -XPOST -H "Content-Type: application/x-www-form-urlencoded" -d "grant_type=password&client_id=admin-cli&username=${SSO_ADMIN_USER}&password=${SSO_ADMIN_PASS}" https://${SSO_URL}/auth/realms/master/protocol/openid-connect/token | jq -r .access_token );
+                  EXISTS=$(curl -sSL -k -XGET -H "Authorization: bearer ${ADMIN_BEARER}" -H "Content-Type: application/json" https://${SSO_URL}/auth/admin/realms | jq "contains([{ \"id\": \"$(cat /config/realms/$file | jq -r .id)\" }])")
+                  echo "Realm $(cat /config/realms/$file | jq -r .realm) exists: $EXISTS";
+                  if test "$EXISTS" = "true"; then
+                    echo "Realm $(cat /config/realms/$file | jq -r .realm) is going to be updated";
+                    echo "Result of update:";
+                    curl -sSL -i -k -XPUT -H "Authorization: bearer ${ADMIN_BEARER}" -H "Content-Type: application/json" --data @/config/realms/$file "https://${SSO_URL}/auth/admin/realms/$(cat /config/realms/$file | jq -r .realm)";
+                  else
+                    echo "Realm $(cat /config/realms/$file | jq -r .realm) is going to be created";
+                    echo "Result of create:";
+                    curl -sSL -i -k -XPOST -H "Authorization: bearer ${ADMIN_BEARER}" -H "Content-Type: application/json" --data @/config/realms/$file https://${SSO_URL}/auth/admin/realms;
+                  fi
+                done;
+            env:
+            - name: SSO_URL
+              value: "{{ .Values.name }}:8443"
+            - name: SSO_ADMIN_USER
+              value: {{ .Values.admin.user | quote }}
+            - name: SSO_ADMIN_PASS
+              value: {{ .Values.admin.pass | quote }}
+            volumeMounts:
+            - name: sso-reamls
+              mountPath: /config/realms
+          restartPolicy: OnFailure
+          volumes:
+          - name: sso-reamls
+            configMap:
+              name: sso-reamls
 {{- end}}
