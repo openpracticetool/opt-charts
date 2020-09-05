@@ -10,10 +10,8 @@ metadata:
 spec:
   replicas: 1
   selector:
-    app: {{ .Values.name }}
-    deploymentconfig: {{ .Values.name }}
-    container: spring
-    group: {{ .Values.name }}
+    matchLabels:
+      deploymentconfig: {{ .Values.name }}
   template:
     metadata:
       labels:
@@ -34,7 +32,7 @@ spec:
         - name: SPRING_PROFILES_ACTIVE
           value: prod
         - name: SPRING_DATA_MONGODB_URI
-          value: mongodb://{{ .Values.mongodb.user }}:{{ .Values.mongodb.pass }}@${{ .Values.name }}-mongodb:27017/{{ .Values.name }}
+          value: mongodb://{{ .Values.mongodb.user }}:{{ .Values.mongodb.pass }}@{{ .Values.name }}-mongodb:27017/{{ .Values.mongodb.database }}
         - name: SPRING_DATA_MONGODB_DATABASE
           value: {{ .Values.name }}
         - name: POSTMAN_RUNNER_URL
@@ -43,9 +41,7 @@ spec:
           value: http://{{ .Values.name }}:8080
         - name: KEYCLOAK_URL
           value: {{ .Values.keycloack.host }}/auth
-        resources:
-          limits:
-            memory: "${MEMORY_LIMIT}"
+{{ toYaml .Values.resources | indent 8 }}
         livenessProbe:
           httpGet:
             path: "/api/health"

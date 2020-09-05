@@ -1,6 +1,8 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: DeploymentConfig
 metadata:
+  annotations:
+    template.alpha.openshift.io/wait-for-ready: 'true'
   name: {{ .Values.name }}-mongodb
   labels:
     app: {{ .Values.name }}
@@ -8,6 +10,19 @@ metadata:
     group: {{ .Values.name }}
     app.kubernetes.io/part-of: {{ .Values.name }}
 spec:
+  triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+          - mongodb
+        from:
+          kind: ImageStreamTag
+          name: "mongodb:{{ .Values.mongodb.version }}"
+          namespace: openshift
+      type: ImageChange
+    - type: ConfigChange
+  strategy:
+    type: Recreate
   replicas: 1
   selector:
     app: {{ .Values.name }}
@@ -52,9 +67,7 @@ spec:
           value: {{ .Values.mongodb.pass | quote }}
         - name: MONGODB_DATABASE
           value: {{ .Values.name }}
-        resources:
-          limits:
-            memory: {{ .Values.mongodb.resources.limits.memory | quote }}
+{{ toYaml .Values.mongodb.resources | indent 8 }}
         volumeMounts:
         - name: {{ .Values.name }}-mongodb-data
           mountPath: "/var/lib/mongodb/data"
@@ -66,7 +79,7 @@ spec:
           privileged: false
       volumes:
       - name: {{ .Values.name }}-mongodb-data
-        emptyDir:
-          medium: ''
+        persistentVolumeClaim:
+          claimName: {{ .Values.name }}-mongodb
       restartPolicy: Always
       dnsPolicy: ClusterFirst

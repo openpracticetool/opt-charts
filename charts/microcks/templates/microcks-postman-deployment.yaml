@@ -10,10 +10,8 @@ metadata:
 spec:
   replicas: 1
   selector:
-    app: {{ .Values.name }}
-    deploymentconfig: {{ .Values.name }}-postman-runtime
-    container: postman-runtime
-    group: {{ .Values.name }}
+    matchLabels:
+      deploymentconfig: {{ .Values.name }}-postman-runtime
   template:
     metadata:
       labels:

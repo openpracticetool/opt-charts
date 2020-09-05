@@ -1,5 +1,9 @@
 name: microcks
-host: microcks.example.com
+host: microcks-test-charts.apps.s45.core.rht-labs.com
+
+resources:
+  limits:
+    memory: "512Mi"
 
 image:
   repo: quay.io/microcks/microcks
@@ -11,11 +15,15 @@ postman:
     tag: latest
 
 mongodb:
+  version: "3.6"
+  adminPass: root
   user: microcks
   pass: microcks
+  database: microcks
+  size: "1Gi"
   resources:
     limits:
-      memory: 512Mi
+      memory: "512Mi"
 
 keycloack:
-  host: sso.example.com
+  host: https://sso-test-charts.apps.s45.core.rht-labs.com
