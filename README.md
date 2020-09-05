@@ -4,16 +4,16 @@ In this repository you will find some Helm charts used for Open Practice Tool as
 
 ## Charts
 
-### Stable
+### Stable
 
 * Red Hat Single Sign On.
 
-### Incubator
+### Incubator
 
 * Apicurio.
 * Microcks.
 
-## How to use this repo
+## How to use this repo
 
 1. Install [Helm CLI](https://helm.sh/docs/intro/install/) on you workstation.
 
