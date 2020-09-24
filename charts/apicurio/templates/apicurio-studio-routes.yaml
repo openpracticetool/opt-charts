@@ -15,7 +15,7 @@ spec:
     insecureEdgeTerminationPolicy: Redirect
 ---
 kind: Route
-apiVersion: v1
+apiVersion: route.openshift.io/v1
 metadata:
   name: {{ .Values.ws.name }}
   labels:
@@ -31,7 +31,7 @@ spec:
     insecureEdgeTerminationPolicy: Redirect
 ---
 kind: Route
-apiVersion: v1
+apiVersion: route.openshift.io/v1
 metadata:
   name: {{ .Values.ui.name }}
   labels:
