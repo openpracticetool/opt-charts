@@ -67,8 +67,8 @@ spec:
           value: {{ .Values.mongodb.pass | quote }}
         - name: MONGODB_DATABASE
           value: {{ .Values.name }}
-        resources:
-{{ toYaml .Values.mongodb.resources | indent 8 }}
+#         resources:
+# {{ toYaml .Values.mongodb.resources | indent 8 }}
         volumeMounts:
         - name: {{ .Values.name }}-mongodb-data
           mountPath: "/var/lib/mongodb/data"
