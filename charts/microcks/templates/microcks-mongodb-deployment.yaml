@@ -72,9 +72,7 @@ spec:
           mountPath: "/var/lib/mongodb/data"
         terminationMessagePath: "/dev/termination-log"
         imagePullPolicy: IfNotPresent
-        capabilities: {}
         securityContext:
-          capabilities: {}
           privileged: false
       volumes:
       - name: {{ .Values.name }}-mongodb-data
