@@ -51,7 +51,7 @@ spec:
             value: debug
           {{- end }}
           - name: APICURIO_KC_AUTH_URL
-            value: {{ .Values.keycloak.url }}
+            value: {{ .Values.keycloak.url }}/auth
           - name: APICURIO_KC_REALM
             value: {{ .Values.keycloak.realm }}
           # - name: APICURIO_KC_CLIENT_ID

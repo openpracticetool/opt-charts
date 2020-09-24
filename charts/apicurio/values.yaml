@@ -17,10 +17,10 @@ ui:
   hub:
     api:
       # url to hub api
-      url: http://APICURIO_URL/studio-api
+      url: https://apicurio-studio-api-test-charts.apps.s45.core.rht-labs.com
   editing:
     # url to editing
-    url: ws://APICURIO_URL/ws
+    url: wss://apicurio-studio-ws-test-charts.apps.s45.core.rht-labs.com
   feature:
     microcks: false
 
@@ -33,7 +33,7 @@ ws:
 
 database:
   name: apicurio-studio-db
-  image: percona:5.7
+  version: "8.0"
   port: 3306
   imagePullPolicy: IfNotPresent
   initialize: true
@@ -53,17 +53,18 @@ loggingEnabled: false
 microcks:
   api:
     # url to mickrocks application
-    url: http://MICROCKS_URL/api
+    url: https://microcks-test-charts.apps.s45.core.rht-labs.com/api
+  realm: microcks
   client:
     id: microcks-serviceaccount
     #default secret
-    secret: apicuriomr
+    secret: "27a85ae0-0434-49a3-bcde-dc5197a8ccbd"
 
 #Configure keycloak application
 keycloak:
   # url to keycloak app
-  url: http://KEYCLOAK_URL/auth
-  realm: Apicurio
+  url: https://sso-test-charts.apps.s45.core.rht-labs.com
+  realm: apicurio
   client:
     id: apicurio-studio
     #default secret

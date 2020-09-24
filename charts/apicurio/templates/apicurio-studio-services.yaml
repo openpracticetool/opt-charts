@@ -45,18 +45,20 @@ spec:
       targetPort: 8080
       protocol: TCP
   selector:
-    module: {{ .Values.ws.name }}
+    app: {{ .Values.ws.name }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
+  annotations:
+    template.openshift.io/expose-uri: 'mysql://{.spec.clusterIP}:{.spec.ports[?(.name=="mysql")].port}'
   labels:
-    module: {{ .Values.database.name }}
+    app: {{ .Values.database.name }}
   name: {{ .Values.database.name }}
 spec:
   ports:
-    - name: {{ .Values.database.port | quote }}
+    - name: mysql
       port: {{ .Values.database.port }}
       targetPort: 3306
   selector:
-    module: {{ .Values.database.name }}
+    app: {{ .Values.database.name }}

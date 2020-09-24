@@ -51,7 +51,7 @@ spec:
             value: debug
           {{- end }}
           - name: APICURIO_DB_CONNECTION_URL
-            value: {{ .Values.keycloak.url }}
+            value: {{ .Values.database.url }}
           - name: APICURIO_DB_DRIVER_NAME
             value: {{ .Values.database.driver }}
           - name: APICURIO_DB_INITIALIZE
