@@ -34,7 +34,6 @@ spec:
           livenessProbe:
             failureThreshold: 3
             initialDelaySeconds: 90
-            'successThreshold:': 1
             tcpSocket:
               port: 5432
             timeoutSeconds: 10
