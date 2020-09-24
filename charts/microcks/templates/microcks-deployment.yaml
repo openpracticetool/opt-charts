@@ -41,8 +41,6 @@ spec:
           value: http://{{ .Values.name }}:8080
         - name: KEYCLOAK_URL
           value: {{ .Values.keycloack.host }}/auth
-#         resources:
-# {{ toYaml .Values.resources | indent 8 }}
         livenessProbe:
           httpGet:
             path: "/api/health"
