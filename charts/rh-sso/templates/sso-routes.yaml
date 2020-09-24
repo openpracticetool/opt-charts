@@ -1,5 +1,4 @@
 apiVersion: route.openshift.io/v1
-id: {{ .Values.name }}-https
 kind: Route
 metadata:
   annotations:
@@ -11,4 +10,5 @@ spec:
   tls:
     termination: reencrypt
   to:
+    kind: Service
     name: {{ .Values.name }}

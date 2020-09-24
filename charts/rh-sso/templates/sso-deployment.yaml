@@ -25,7 +25,6 @@ spec:
                 - /bin/bash
                 - '-c'
                 - /opt/eap/bin/readinessProbe.sh
-{{ toYaml .Values.resources | indent 10 }}
           name: {{ .Values.name }}
           livenessProbe:
             exec:
